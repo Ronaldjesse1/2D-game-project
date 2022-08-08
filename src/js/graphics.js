@@ -114,11 +114,17 @@ class Graphics {
         User.data.level;
     }
 
-    static render_player() {}
+    static render_player() {
+    }
 
     // could either save them in Graphics.images or load them each time from cache.
     static render_image(image, x, y) {
-        Graphics.ctx.drawImage(Graphics.images[image], x || 0, y || 0);
+        console.log('render_image called', image);
+
+        var img = Graphics.images[image];
+        if (img) {
+            Graphics.ctx.drawImage(img, x || 0, y || 0);
+        }
     }
 
     static clear_screen(color) {
@@ -181,7 +187,19 @@ class Graphics {
         Graphics.render();
         console.log(Graphics.objects);
     }
+    static gameLoop(){
+        Graphics.render();
+        
 
+        var circle = Graphics.objects[1];
+        if (circle) {
+            circle.x ++;
+            circle.y ++;
+        }
+        // Graphics.objects.test_circle.x ++;
+        // Graphics.objects.test_circle.y ++;
+        // console.log(Graphics.objects.test_circle.x);
+    }
     static GraphicsObject = class {
 
         constructor({ type, x, y, fillStyle, strokeStyle, children, onmousedown }) {
@@ -239,6 +257,7 @@ class Graphics {
             this.r = r;
         }
         render() {
+            
             Graphics.ctx.fillStyle = this.fillStyle;
             Graphics.ctx.beginPath();
             Graphics.ctx.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
@@ -264,7 +283,7 @@ class Graphics {
         }
 
         render() {
-
+            Graphics.ctx.clear
             Graphics.ctx.textAlign = this.align;
             Graphics.ctx.font = this.font;
             Graphics.ctx.textAlign = this.align;
@@ -279,6 +298,8 @@ class Graphics {
             Graphics.ctx.fillText(this.text, this.x, this.y);
         }
     }
+    
+
 }
 
 export { Graphics };
