@@ -11,24 +11,24 @@ class Graphics {
 
     static images = {};
 
-    static objects = [];
+    static objects = {};
 
-    static init() {
+    static init(callback) {
 
         let canvas = document.getElementById('game');
-        if (!canvas) { alert('unsupported browser or error loading resources'); return };
+        if (!canvas || !canvas.getContext) { alert('unsupported browser or error loading resources'); return };
 
         this.ctx = canvas.getContext('2d');
         if (!this.ctx) { alert('unsupported browser or error loading resources'); return };
 
         // this.width = Math.floor(window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) * 0.6);
         // this.height = Math.floor( (window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight) * 0.6 );
-        
+
         this.width = 800;
         this.height = 500;
         this.offsetX = canvas.offsetLeft;
         this.offsetY = canvas.offsetTop;
-        
+
         let scale = window.devicePixelRatio;
 
         canvas.style.width = this.width + 'px';
@@ -36,7 +36,7 @@ class Graphics {
         canvas.width = Math.floor(this.width * scale);
         canvas.height = Math.floor(this.height * scale);
         canvas.style.border = '1px solid black';
-        
+
         this.ctx.scale(scale, scale);
 
         canvas.oncontextmenu = () => false;
@@ -44,27 +44,27 @@ class Graphics {
         canvas.onmousedown = (e) => {
 
             let x = (e.x || e.pageX || e.clientX || e.layerX) - this.offsetX,
-                y = (e.y || e.pageY || e.clientY ||e.layerY) - this.offsetY;
+                y = (e.y || e.pageY || e.clientY || e.layerY) - this.offsetY;
 
-            for (const object of Graphics.objects) {
+            for (const object of Object.values(Graphics.objects)) {
                 if (!object.onmousedown) continue;
                 // collission
                 if (object instanceof Graphics.GraphicsRectangle && Utils.point_in_rect(x, y, object)) {
                     object.onmousedown(e);
                 } else if (object instanceof Graphics.GraphicsCircle && Utils.point_in_circle(x, y, object)) {
                     object.onmousedown(e);
-                } 
+                }
             }
         }
 
         canvas.onmouseup = (e) => {
             let x = (e.x || e.pageX || e.clientX || e.layerX) - this.offsetX,
-                y = (e.y || e.pageY || e.clientY ||e.layerY) - this.offsetY;
+                y = (e.y || e.pageY || e.clientY || e.layerY) - this.offsetY;
         }
 
         canvas.onmousemove = (e) => {
             let x = (e.x || e.pageX || e.clientX || e.layerX) - this.offsetX,
-                y = (e.y || e.pageY || e.clientY ||e.layerY) - this.offsetY;
+                y = (e.y || e.pageY || e.clientY || e.layerY) - this.offsetY;
         }
 
         canvas.onmouseenter = (e) => {
@@ -75,7 +75,8 @@ class Graphics {
 
         // load images
         let images = {
-            'start-bg': 'sources/start-bg.jpg'
+            'start-bg': 'sources/start-bg.jpg',
+            'start-bg-orig': 'sources/start-bg.jpg.orig'
         };
 
         for (const [title, src] of Object.entries(images)) {
@@ -87,7 +88,7 @@ class Graphics {
                 Graphics.images[title] = this;
                 if (Object.keys(Graphics.images).length == Object.keys(images).length) {
                     console.log('all images loaded');
-                    Graphics.render_start_screen();
+                    callback();
                 }
             }
 
@@ -99,12 +100,9 @@ class Graphics {
     }
 
 
-    static loaded(f) {
-        this.loaded_callback = f;
-    }
-
     static render() {
-        for (const object of this.objects) {
+        this.clear_screen();
+        for (const object of Object.values(this.objects)) {
             object.render();
         }
     }
@@ -114,16 +112,11 @@ class Graphics {
         User.data.level;
     }
 
-    static render_player() {
-    }
-
     // could either save them in Graphics.images or load them each time from cache.
     static render_image(image, x, y) {
         console.log('render_image called', image);
-
-        var img = Graphics.images[image];
-        if (img) {
-            Graphics.ctx.drawImage(img, x || 0, y || 0);
+        if (Graphics.images[image]) {
+            Graphics.ctx.drawImage(Graphics.images[image], x || 0, y || 0);
         }
     }
 
@@ -138,72 +131,19 @@ class Graphics {
         ctx.fillText(text, x, y);
     }
 
-
-    static render_start_screen() {
-
-        this.clear_screen();
-
-        this.render_image('start-bg');
-
-        let width = this.width * 0.6,
-            height = this.height * 0.5,
-            x = this.width * 0.2,
-            y = this.height * 0.25;
-
-        let text = new this.GraphicsText({
-            text: 'click to start',
-            align: 'center',
-            base: 'middle',
-            font: '40px serif',
-            fillStyle: 'blue',
-            x: width / 2,
-            y: height / 2
-        });
-
-        let button = new this.GraphicsRectangle({
-            x: x,
-            y: y,
-            width: width,
-            height: height,
-            children: [text],
-            opacity: '',
-            strokeStyle: 'blue',
-            fillStyle: 'purple',
-            onmousedown: (e) => console.log('start game')
-        });
-
-
-        let test_circle = new this.GraphicsCircle({
-            x: 100,
-            y: 100,
-            r: 25,
-            strokeStyle: 'red',
-            fillStyle: 'yellow',
-            onmousedown: () => console.log('test circle clicked')
-        });
-
-        Graphics.objects.push(button);
-        Graphics.objects.push(test_circle);
-        Graphics.render();
-        console.log(Graphics.objects);
+    static add_object(obj) {
+        if (obj.id)
+            this.objects[obj.id] = obj;
+        else
+            console.log('could not add object; missing id')
     }
-    static gameLoop(){
-        Graphics.render();
-        
 
-        var circle = Graphics.objects[1];
-        if (circle) {
-            circle.x ++;
-            circle.y ++;
-        }
-        // Graphics.objects.test_circle.x ++;
-        // Graphics.objects.test_circle.y ++;
-        // console.log(Graphics.objects.test_circle.x);
-    }
     static GraphicsObject = class {
 
-        constructor({ type, x, y, fillStyle, strokeStyle, children, onmousedown }) {
+        constructor({ id, x, y, fillStyle, strokeStyle, children, onmousedown }) {
 
+            if (!id) console.log('object created without id!');
+            this.id = id;
             this.x = x || 0;
             this.y = y || 0;
             this.fillStyle = fillStyle || 'black';
@@ -218,18 +158,27 @@ class Graphics {
         }
         render() {
             Graphics.ctx.translate(this.x, this.y);
-            for (let i = 0; i < this.children; i++) {
-                this.children[i].render();
+            for (const child of this.children) {
+                child.render();
             }
             Graphics.ctx.translate(-this.x, -this.y);
         }
-        add_child(child) {}
+
+        render_children() {
+            Graphics.ctx.translate(this.x, this.y);
+            for (const child of this.children) {
+                child.render();
+            }
+            Graphics.ctx.translate(-this.x, -this.y)
+        }
+
+        add_child(child) { }
     }
 
     static GraphicsRectangle = class extends Graphics.GraphicsObject {
 
-        constructor({ x, y, width, height, children, strokeStyle, fillStyle, onmousedown }) {
-            super({ x: x, y: y, strokeStyle: strokeStyle, fillStyle: fillStyle, children: children, onmousedown: onmousedown });
+        constructor({ id, x, y, width, height, children, strokeStyle, fillStyle, onmousedown }) {
+            super(arguments[0]);
             this.width = width;
             this.height = height;
         }
@@ -244,18 +193,18 @@ class Graphics {
             }
 
             Graphics.ctx.fillRect(this.x, this.y, this.width, this.height);
-            
-            Graphics.ctx.translate(this.x, this.y);
-            for (const child of this.children) child.render();
-            Graphics.ctx.translate(-this.x, -this.y)
+
+            this.render_children();
         }
     }
 
     static GraphicsCircle = class extends Graphics.GraphicsObject {
-        constructor({ x, y, r, fillStyle, strokeStyle, children, onmousedown }) {
-            super({x: x, y: y, fillStyle: fillStyle, strokeStyle: strokeStyle, children: children, onmousedown: onmousedown});
+
+        constructor({ id, x, y, r, fillStyle, strokeStyle, children, onmousedown }) {
+            super(arguments[0]);
             this.r = r;
         }
+
         render() {
             
             Graphics.ctx.fillStyle = this.fillStyle;
@@ -267,6 +216,7 @@ class Graphics {
                 Graphics.ctx.stroke();
             }
             Graphics.ctx.closePath();
+            this.render_children();
         }
     }
 
@@ -274,8 +224,8 @@ class Graphics {
     // TODO make text background
     static GraphicsText = class extends Graphics.GraphicsObject {
 
-        constructor({ text, x, y, align, base, font, fillStyle, strokeStyle }) {
-            super({ x: x, y: y, fillStyle: fillStyle, strokeStyle: strokeStyle });
+        constructor({ id, text, x, y, align, base, font, fillStyle, strokeStyle }) {
+            super(arguments[0]);
             this.text = text;
             this.align = align || 'center';
             this.base = base || 'bottom';
@@ -283,7 +233,6 @@ class Graphics {
         }
 
         render() {
-            Graphics.ctx.clear
             Graphics.ctx.textAlign = this.align;
             Graphics.ctx.font = this.font;
             Graphics.ctx.textAlign = this.align;
@@ -296,6 +245,35 @@ class Graphics {
             }
 
             Graphics.ctx.fillText(this.text, this.x, this.y);
+            this.render_children();
+        }
+    }
+
+    static GraphicsImage = class extends Graphics.GraphicsObject {
+
+        constructor({ id, x, y, width, height, src, fillStyle, strokeStyle }) {
+            super(arguments[0]);
+            this.src = src;
+            this.width = width || Graphics.width;
+            this.width = height || Graphics.height;
+        }
+
+        render() {
+            Graphics.render_image(this.src, this.x, this.y, this.width, this.height);
+            this.render_children();
+        }
+    }
+
+    static GraphicsGif = class extends Graphics.GraphicsObject {
+        constructor({ id, x, y, width, height, src, fillStyle, strokeStyle, delay }) {
+            super(arguments[0]);
+            this.src = src;
+            this.width = width || Graphics.width;
+            this.width = height || Graphics.height;
+        }
+
+        render() {
+            this.render_children();
         }
     }
     
