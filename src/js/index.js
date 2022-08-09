@@ -1,12 +1,13 @@
 import { Graphics } from './graphics.js';
 import { User } from './user.js';
 import { Game } from './game.js';
+import { Input } from './input.js';
 
 window.onload = () => {
     User.load_data();
+    Input.init();
     Graphics.init(() => {
         Graphics.clear_screen();
-
         let width = Graphics.width * 0.6,
             height = Graphics.height * 0.5,
             x = Graphics.width * 0.2,
@@ -46,14 +47,12 @@ window.onload = () => {
                 console.log('start game');
                 delete Graphics.objects['start_screen_bg'];
                 delete Graphics.objects['start_screen_rect'];
-                Graphics.render();
-                console.log(Graphics.objects);
+                Game.start();
             }
         });
+        Game.init();
         Graphics.add_object(start_img);
         Graphics.add_object(button);
         Graphics.render();
-        console.log(Graphics.objects);
     });
-    Game.init();
 }
