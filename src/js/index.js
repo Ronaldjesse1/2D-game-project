@@ -6,6 +6,7 @@ import { Input } from './input.js';
 window.onload = () => {
     User.load_data();
     Input.init();
+    Game.init();
     Graphics.init(() => {
         Graphics.clear_screen();
         let width = Graphics.width * 0.6,
@@ -15,7 +16,7 @@ window.onload = () => {
 
         let start_img = new Graphics.GraphicsImage({
             id: 'start_screen_bg',
-            src: 'start-bg',
+            imgid: 'start-bg',
             x: 0,
             y: 0,
             width: Graphics.width,
@@ -50,7 +51,6 @@ window.onload = () => {
                 Game.start();
             }
         });
-        Game.init();
         Graphics.add_object(start_img);
         Graphics.add_object(button);
         Graphics.render();

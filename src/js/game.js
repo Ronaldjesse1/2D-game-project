@@ -1,47 +1,69 @@
-import { Player } from './player.js';
 import { Graphics } from './graphics.js';
-import { Input } from './input.js';
+import { Input, InputStatus } from './input.js';
+import { User } from './user.js';
+import { Maps } from './map.js';
+import { Utils } from './utils.js';
 
 class Game {
 
+    static map;
+    static player_loc = 0;
+    static active = false;
+    static player_step = 2;
+    static map_padding = 25;
+
     static init() {
-        this.circle = new gametestcircle
+
+        Game.map = Maps[User.mapno];
+
+        Input.keydown.subscribe('Escape', () => {
+            Game.active ^= true;
+        });
     }
 
     static loop() {
-        this.circle.draw()
+        if (InputStatus['w']) Game.player_move(0, -Game.player_step);
+        if (InputStatus['s']) Game.player_move(0, Game.player_step);
+        if (InputStatus['d']) Game.player_move(Game.player_step, 0);
+        if (InputStatus['a']) Game.player_move(-Game.player_step, 0);
+        Game.active && requestAnimationFrame(Game.loop);
     }
 
     static start() {
-        window.setInterval(() => this.loop(), 10)
-    }
-}
 
-class gametestcircle {
+        Graphics.render_image();
+        Graphics.clear_screen();
 
-    constructor() {
-
-        this.velx = 1
-        this.vely = 1
-
-        Graphics.add_object(new Graphics.GraphicsCircle({
-            id: 'test_circle',
-            r: 25,
-            x: 20,
-            y: 50,
+        Graphics.add_object(new Graphics.GraphicsImage({
+            id: 'player',
+            x: Game.map.points[0][0] - Game.map._offsetx - 25,
+            y: Game.map.points[0][1] - Game.map._offsety - 25,
+            strokeStyle: 'black',
+            width: 50,
+            height: 50,
+            imgid: 'player',
         }));
-        Input.keydown.subscribe('w', () => this.vely = -1);
-        Input.keydown.subscribe('s', () => this.vely = 1);
-        Input.keydown.subscribe('a', () => this.velx = -1);
-        Input.keydown.subscribe('d', () => this.velx = 1);
+
+        Graphics.render();
+        Game.active = true;
+        Game.loop();
     }
 
-    draw() {
-        let circle = Graphics.objects['test_circle'];
-        if (circle) {
-            circle.x += this.velx
-            circle.y += this.vely
+    static player_move(dx, dy) {
+
+        let player = Graphics.objects['player'];
+
+        if (player.x + dx > Game.map_padding && player.x + player.width + dx < Graphics.width - Game.map_padding) {
+            player.x += dx;
+        } else {
+            Game.map.offsetx(dx);
         }
+        if (player.y + dy > Game.map_padding && player.y + player.height + dy < Graphics.height - Game.map_padding) {
+            player.y += dy;
+        } else {
+            Game.map.offsety(-dy);
+        }
+
         Graphics.render();
     }
 }

@@ -4,13 +4,14 @@ import { Utils } from './utils.js';
 class Graphics {
 
     static ctx;
-    static width;
-    static height;
+    static width = 800;
+    static height = 500;
     static offsetX;
     static offsetY;
 
     static images = {};
 
+    // TODO render priority
     static objects = {};
 
     static init(callback) {
@@ -24,10 +25,8 @@ class Graphics {
         // this.width = Math.floor(window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) * 0.6);
         // this.height = Math.floor( (window.innerHeight|| document.documentElement.clientHeight|| document.body.clientHeight) * 0.6 );
 
-        this.width = 800;
-        this.height = 500;
-        this.offsetX = canvas.offsetLeft;
-        this.offsetY = canvas.offsetTop;
+        Graphics.offsetX = canvas.offsetLeft;
+        Graphics.offsetY = canvas.offsetTop;
 
         let scale = window.devicePixelRatio;
 
@@ -76,29 +75,35 @@ class Graphics {
         // load images
         let images = {
             'start-bg': 'sources/start-bg.jpg',
-            'start-bg-orig': 'sources/start-bg.jpg.orig'
+            'start-bg-orig': 'sources/start-bg.jpg.orig',
+            'map-0': 'sources/map-0.png',
+            'player': 'sources/player.png'
         };
 
         for (const [title, src] of Object.entries(images)) {
-            let img = new Image;
-            img.src = src;
-            console.log('loading ' + title);
-            img.onload = function() {
-                console.log('loaded ' + title)
-                Graphics.images[title] = this;
+            this.load_image(src, title, () => {
                 if (Object.keys(Graphics.images).length == Object.keys(images).length) {
                     console.log('all images loaded');
                     callback();
                 }
-            }
+            });
 
         }
 
         this.clear_screen();
-
         console.log('Graphics.init() successful')
     }
 
+    static load_image(src, title, f = () => {}) {
+        let img = new Image;
+        img.src = src;
+        console.log('loading ' + title);
+        img.onload = function() {
+            console.log('loaded ' + title)
+            Graphics.images[title] = this;
+            f();
+        }
+    }
 
     static render() {
         this.clear_screen();
@@ -107,14 +112,8 @@ class Graphics {
         }
     }
 
-    static render_map() {
-        User.data.map;
-        User.data.level;
-    }
-
     // could either save them in Graphics.images or load them each time from cache.
     static render_image(image, x, y) {
-        console.log('render_image called', image);
         if (Graphics.images[image]) {
             Graphics.ctx.drawImage(Graphics.images[image], x || 0, y || 0);
         }
@@ -172,7 +171,9 @@ class Graphics {
             Graphics.ctx.translate(-this.x, -this.y)
         }
 
-        add_child(child) { }
+        add_child(child) {
+            this.children.push(child)
+        }
     }
 
     static GraphicsRectangle = class extends Graphics.GraphicsObject {
@@ -206,7 +207,7 @@ class Graphics {
         }
 
         render() {
-            
+
             Graphics.ctx.fillStyle = this.fillStyle;
             Graphics.ctx.beginPath();
             Graphics.ctx.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
@@ -251,15 +252,19 @@ class Graphics {
 
     static GraphicsImage = class extends Graphics.GraphicsObject {
 
-        constructor({ id, x, y, width, height, src, fillStyle, strokeStyle }) {
+        constructor({ id, x, y, width, height, imgid, fillStyle, strokeStyle }) {
             super(arguments[0]);
-            this.src = src;
+            this.imgid = imgid;
             this.width = width || Graphics.width;
-            this.width = height || Graphics.height;
+            this.height = height || Graphics.height;
         }
 
         render() {
-            Graphics.render_image(this.src, this.x, this.y, this.width, this.height);
+            Graphics.render_image(this.imgid, this.x, this.y, this.width, this.height);
+            if (this.strokeStyle) {
+                Graphics.ctx.strokeStyle = this.strokeStyle;
+                Graphics.ctx.strokeRect(this.x, this.y, this.width, this.height);
+            }
             this.render_children();
         }
     }
@@ -276,7 +281,7 @@ class Graphics {
             this.render_children();
         }
     }
-    
+
 
 }
 

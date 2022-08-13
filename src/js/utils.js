@@ -11,5 +11,12 @@ class Utils {
         return Math.pow(x - circle.x, 2) + Math.pow(y - circle.y, 2) < Math.pow(circle.r, 2)
     }
 
+    static rect_in_rect(innerrect, outerrect) {
+        return Utils.point_in_rect(innerrect.x, innerrect.y, outerrect) &&
+            Utils.point_in_rect(innerrect.x + innerrect.width, innerrect.y, outerrect) &&
+            Utils.point_in_rect(innerrect.x, innerrect.y + innerrect.height, outerrect) &&
+            Utils.point_in_rect(innerrect.x + innerrect.width, innerrect.y + innerrect.height, outerrect)
+    }
+
 }
 export { Utils }
