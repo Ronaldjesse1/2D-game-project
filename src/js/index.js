@@ -2,11 +2,15 @@ import { Graphics } from './graphics.js';
 import { User } from './user.js';
 import { Game } from './game.js';
 import { Input } from './input.js';
+import { GameEngine } from './gameengine.js';
 
 window.onload = () => {
     User.load_data();
     Input.init();
     Graphics.init(() => {
+
+        let gameEngine = new GameEngine();
+
         Graphics.clear_screen();
         let width = Graphics.width * 0.6,
             height = Graphics.height * 0.5,
@@ -47,10 +51,12 @@ window.onload = () => {
                 console.log('start game');
                 delete Graphics.objects['start_screen_bg'];
                 delete Graphics.objects['start_screen_rect'];
-                Game.start();
+                // Game.start();
+                gameEngine.start("./resources/scenes/scene1.json");
             }
         });
-        Game.init();
+        // Game.init();
+        gameEngine.init();
         Graphics.add_object(start_img);
         Graphics.add_object(button);
         Graphics.render();

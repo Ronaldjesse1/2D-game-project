@@ -1,9 +1,9 @@
 
 {
-    "background-image":"resources/images/start-bg.jpg",
+    "background_image":{"url": "./resources/images/start-bg.jpg"},
     "gameobjects": [
-        {"type":"static", "resource-type":"image", "url":"resources/images/banana1.jpg", "position":{"x":100,"y":300}},
-        {"type":"dynamic", "resource-type":"vector", "vector-type":"circle", "position":{"x":100,"y":100}, "size":30,
+        {"type":"static", "resource_type":"image", "url":"./resources/images/banana1.jpg", "position":{"x":100,"y":300}},
+        {"type":"dynamic", "resource_type":"vector", "vector_type":"circle", "position":{"x":100,"y":100}, "size":30,
          "animation":{} }
     ]    
 }
