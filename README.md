@@ -2,8 +2,7 @@
 
 educational RPG game intended for elementary school kids
 
-# History
+#Objectives:
+##[]Map
+###[]using Tiled to make a map 
 
-## 2022/08/13
-
-### Renewing the game engine
