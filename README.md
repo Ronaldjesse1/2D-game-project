@@ -2,7 +2,7 @@
 
 educational RPG game intended for elementary school kids
 
-#Objectives:
-##[]Map
-###[]using Tiled to make a map 
+# Objectives:
+## []Map
+### []using Tiled to make a map 
 
