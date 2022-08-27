@@ -78,7 +78,9 @@ class Graphics {
             'start-bg-orig': 'sources/start-bg.jpg.orig',
             'map-0': 'sources/map-0.png',
             'player': 'sources/player.png',
-            'level': 'sources/level.png'
+            'level': 'sources/level.png',
+            'level-locked': 'sources/level-locked.png',
+            'level-completed': 'sources/level-completed.png',
         };
 
         for (const [title, src] of Object.entries(images)) {
@@ -169,11 +171,14 @@ class Graphics {
             for (const child of this.children) {
                 child.render();
             }
-            Graphics.ctx.translate(-this.x, -this.y)
+            Graphics.ctx.translate(-this.x, -this.y);
         }
 
         add_child(child) {
-            this.children.push(child)
+            this.children.push(child);
+        }
+        insert_child(child, index = 0) {
+            this.children.splice(index, 0, child);
         }
     }
 

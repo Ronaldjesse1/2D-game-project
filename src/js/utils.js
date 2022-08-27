@@ -18,5 +18,12 @@ class Utils {
             Utils.point_in_rect(innerrect.x + innerrect.width, innerrect.y + innerrect.height, outerrect)
     }
 
+    static rect_touching_rect(rect1, rect2) {
+        return Utils.point_in_rect(rect1.x, rect1.y, rect2) ||
+            Utils.point_in_rect(rect1.x + rect1.width, rect1.y, rect2) ||
+            Utils.point_in_rect(rect1.x, rect1.y + rect1.height, rect2) ||
+            Utils.point_in_rect(rect1.x + rect1.width, rect1.y + rect1.height, rect2)
+    }
+
 }
 export { Utils }

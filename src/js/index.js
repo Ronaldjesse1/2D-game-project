@@ -2,12 +2,15 @@ import { Graphics } from './graphics.js';
 import { User } from './user.js';
 import { Game } from './game.js';
 import { Input } from './input.js';
+import { Map } from './map.js';
 
 window.onload = () => {
     User.load_data();
     Input.init();
+    Map.init();
     Game.init();
     Graphics.init(() => {
+
         Graphics.clear_screen();
         let width = Graphics.width * 0.6,
             height = Graphics.height * 0.5,

@@ -36,16 +36,15 @@ class Game {
         Graphics.render_image();
         Graphics.clear_screen();
 
-        Graphics.add_object(new Graphics.GraphicsImage({
+        Graphics.objects['map'].insert_child(new Graphics.GraphicsImage({
             id: 'player',
-            x: Game.map.points[0][0] - Game.map._offsetx - 25,
-            y: Game.map.points[0][1] - Game.map._offsety - 25,
+            x: Game.map.spawn[0],
+            y: Game.map.spawn[1],
             strokeStyle: 'black',
             width: 50,
             height: 50,
             imgid: 'player',
-        }));
-
+        }), 0);
         Graphics.render();
         Game.active = true;
         Game.loop();
@@ -53,18 +52,34 @@ class Game {
 
     static player_move(dx, dy) {
 
-        let player = Graphics.objects['player'];
+        let player = Graphics.objects['map'].children[0];
 
-        if (player.x + dx > Game.map_padding && player.x + player.width + dx < Graphics.width - Game.map_padding) {
-            player.x += dx;
-        } else {
-            Game.map.offsetx(dx);
-        }
+        // update pos, map
+        player.x += dx;
+        player.y += dy;
 
-        if (player.y + dy > Game.map_padding && player.y + player.height + dy < Graphics.height - Game.map_padding) {
-            player.y += dy;
-        } else {
-            Game.map.offsety(-dy)
+        if (dx > 0) player.x = Math.min(player.x, Game.map.width - Game.map_padding - player.width);
+        else        player.x = Math.max(player.x, Game.map_padding);
+
+        if (dy > 0) player.y = Math.min(player.y, Game.map.height - Game.map_padding - player.height);
+        else        player.y = Math.max(player.y, Game.map_padding);
+        
+        if (Game.map._offsetx - player.x < Game.map_padding) Game.map.offsetx(dx);
+        if (player.y - Game.map._offsety < Game.map_padding || player.y + player.height - Game.map._offsety > Graphics.height - Game.map_padding) Game.map.offsety(-dy);
+
+        // check if player is colliding with level
+        for (const level of Graphics.objects['map'].children.slice(1)) {
+            if (Utils.rect_touching_rect(player, level)) {
+                Graphics.objects['map'].add_child(new Graphics.GraphicsText({
+                    id: 'level-alert',
+                    x: level.x + level.width / 2,
+                    y: level.y + level.height,
+                    text: 'press [F] to play (doesnt)',
+                    strokeStyle: 'black',
+                    align: 'center',
+                    font: '10px serif'
+                }));
+            }
         }
 
         Graphics.render();
@@ -75,6 +90,5 @@ class Game {
         }
     }
 }
-
 
 export { Game };

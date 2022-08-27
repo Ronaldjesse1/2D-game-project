@@ -1,5 +1,5 @@
-
 import { Graphics } from './graphics.js';
+import { User } from './user.js';
 
 class Map {
 
@@ -12,18 +12,43 @@ class Map {
     points = []
     name = null
 
-    constructor({ id, name, points }) {
+    static init() {
+        Maps.push(new Map({
+            id: 0,
+            name: '', 
+            spawn: [400, 1925],
+            points: [
+                [375, 1700],
+                [50, 1700],
+                [50, 1500],
+                [500, 1500],
+                [500, 1200],
+                [500, 900],
+                [50, 900],
+                [50, 400],
+                [650, 400],
+                [650, 100],
+            ]}))
+    }
+
+    constructor({ id, name, points, spawn }) {
         if (!points) { console.log('ERROR map created without path'); return; }
         this.id = id 
         this.name = name || 'map' + this.id;
         this.points = points;
+        this.spawn = spawn;
+        this.height = Map.height;
+        this.width = Map.width;
         let points_graphicobjects = [];
         let i = 0;
         points.forEach(([x, y]) => {
-            console.log(x, y, i);
+
+            let img_id = 'level'
+            if (i < User.level) img_id += '-completed';
+            if (i > User.level) img_id += '-locked';
             points_graphicobjects.push(new Graphics.GraphicsImage({
                 id: 'level-' + i,
-                imgid: 'level',
+                imgid: img_id,
                 x: x,
                 y: y,
                 width: 50,
@@ -58,20 +83,6 @@ class Map {
 }
 
 const Maps = [
-    new Map({
-        id: 0,
-        name: '', 
-        points: [
-            [375, 1700],
-            [50, 1700],
-            [50, 1500],
-            [500, 1500],
-            [500, 1200],
-            [500, 900],
-            [50, 900],
-            [50, 400],
-            [650, 400],
-            [650, 100],
-        ]}),
 ];
+
 export { Map, Maps };

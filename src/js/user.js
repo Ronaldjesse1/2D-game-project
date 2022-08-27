@@ -10,9 +10,9 @@ class User {
     static load_data() {
         // let data = JSON.parse(document.localStorage);
         let { name, mapno, level, player } = mock_user()
-        this.name = name;
-        this.mapno = mapno;
-        this.level = level;
+        User.name = name;
+        User.mapno = mapno;
+        User.level = level;
     }
 }
 
@@ -21,7 +21,7 @@ function mock_user() {
     return {
         name: 'test_user_1',
         mapno: 0,
-        level: 0,
+        level: 2,
     };
 }
 
