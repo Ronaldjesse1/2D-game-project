@@ -3,6 +3,7 @@ import { Input, InputStatus } from './input.js';
 import { User } from './user.js';
 import { Maps } from './map.js';
 import { Utils } from './utils.js';
+import { Level } from './level.js';
 
 class Game {
 
@@ -18,6 +19,7 @@ class Game {
 
         Input.keydown.subscribe('Escape', () => {
             Game.active ^= true;
+            if (Game.active) Game.loop();
         });
     }
 
@@ -58,14 +60,21 @@ class Game {
         } else {
             Game.map.offsetx(dx);
         }
+
         if (player.y + dy > Game.map_padding && player.y + player.height + dy < Graphics.height - Game.map_padding) {
             player.y += dy;
         } else {
-            Game.map.offsety(-dy);
+            Game.map.offsety(-dy)
         }
 
         Graphics.render();
     }
+
+    static Level = class {
+        constructor() {
+        }
+    }
 }
+
 
 export { Game };

@@ -77,7 +77,8 @@ class Graphics {
             'start-bg': 'sources/start-bg.jpg',
             'start-bg-orig': 'sources/start-bg.jpg.orig',
             'map-0': 'sources/map-0.png',
-            'player': 'sources/player.png'
+            'player': 'sources/player.png',
+            'level': 'sources/level.png'
         };
 
         for (const [title, src] of Object.entries(images)) {
