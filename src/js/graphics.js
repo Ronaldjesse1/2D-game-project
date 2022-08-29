@@ -74,13 +74,12 @@ class Graphics {
 
         // load images
         let images = {
-            'start-bg': 'sources/start-bg.jpg',
-            'start-bg-orig': 'sources/start-bg.jpg.orig',
-            'map-0': 'sources/map-0.png',
-            'player': 'sources/player.png',
-            'level': 'sources/level.png',
-            'level-locked': 'sources/level-locked.png',
-            'level-completed': 'sources/level-completed.png',
+            'start-bg': 'sources/images/start-bg.jpg',
+            'player': 'sources/images/player.png',
+            'level': 'sources/images/level.png',
+            'level-locked': 'sources/images/level-locked.png',
+            'level-completed': 'sources/images/level-completed.png',
+            'map-0': 'sources/images/map-0.png',
         };
 
         for (const [title, src] of Object.entries(images)) {

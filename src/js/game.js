@@ -7,15 +7,12 @@ import { Level } from './level.js';
 
 class Game {
 
-    static map;
     static player_loc = 0;
     static active = false;
     static player_step = 2;
     static map_padding = 25;
 
     static init() {
-
-        Game.map = Maps[User.mapno];
 
         Input.keydown.subscribe('Escape', () => {
             Game.active ^= true;
@@ -100,10 +97,6 @@ class Game {
         Graphics.render();
     }
 
-    static Level = class {
-        constructor() {
-        }
-    }
 }
 
 export { Game };

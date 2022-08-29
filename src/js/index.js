@@ -58,6 +58,5 @@ window.onload = () => {
         Graphics.add_object(start_img);
         Graphics.add_object(button);
         Graphics.render();
-        Level.load_level(0, 0);
     });
 }

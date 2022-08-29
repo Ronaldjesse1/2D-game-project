@@ -10,25 +10,13 @@ class Map {
     _offsety = 1500
 
     points = []
+
     name = null
 
     static init() {
-        Maps.push(new Map({
-            id: 0,
-            name: '', 
-            spawn: [400, 1925],
-            points: [
-                [375, 1700],
-                [50, 1700],
-                [50, 1500],
-                [500, 1500],
-                [500, 1200],
-                [500, 900],
-                [50, 900],
-                [50, 400],
-                [650, 400],
-                [650, 100],
-            ]}))
+        fetch('./sources/map-locations/' + User.mapno + '.json')
+        .then(response => response.json())
+        .then(jsondata => Map.points = jsondata)
     }
 
     constructor({ id, name, points, spawn }) {
