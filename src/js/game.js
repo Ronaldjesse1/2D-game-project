@@ -28,7 +28,7 @@ class Game {
         if (InputStatus['s']) Game.player_move(0, Game.player_step);
         if (InputStatus['d']) Game.player_move(Game.player_step, 0);
         if (InputStatus['a']) Game.player_move(-Game.player_step, 0);
-        Game.active && requestAnimationFrame(Game.loop);
+        Game.active && window.setTimeout(Game.loop, 1);
     }
 
     static start() {
@@ -40,7 +40,6 @@ class Game {
             id: 'player',
             x: Game.map.spawn[0],
             y: Game.map.spawn[1],
-            strokeStyle: 'black',
             width: 50,
             height: 50,
             imgid: 'player',
@@ -67,19 +66,35 @@ class Game {
         if (Game.map._offsetx - player.x < Game.map_padding) Game.map.offsetx(dx);
         if (player.y - Game.map._offsety < Game.map_padding || player.y + player.height - Game.map._offsety > Graphics.height - Game.map_padding) Game.map.offsety(-dy);
 
+        delete Graphics.objects['level-alert'];
+
         // check if player is colliding with level
+        let i = 0;
         for (const level of Graphics.objects['map'].children.slice(1)) {
             if (Utils.rect_touching_rect(player, level)) {
-                Graphics.objects['map'].add_child(new Graphics.GraphicsText({
-                    id: 'level-alert',
-                    x: level.x + level.width / 2,
-                    y: level.y + level.height,
-                    text: 'press [F] to play (doesnt)',
-                    strokeStyle: 'black',
-                    align: 'center',
-                    font: '10px serif'
-                }));
+                if (i <= User.level) {
+                    Graphics.add_object(new Graphics.GraphicsText({
+                        id: 'level-alert',
+                        x: level.x + level.width / 2 - Game.map._offsetx,
+                        y: level.y + level.height - Game.map._offsety,
+                        text: 'press [F] to play',
+                        strokeStyle: 'black',
+                        align: 'center',
+                        font: '10px serif'
+                    }));
+                } else {
+                    Graphics.add_object(new Graphics.GraphicsText({
+                        id: 'level-alert',
+                        x: level.x + level.width / 2 - Game.map._offsetx,
+                        y: level.y + level.height - Game.map._offsety,
+                        text: 'you haven\'t unlocked this level yet!',
+                        strokeStyle: 'black',
+                        align: 'center',
+                        font: '10px serif'
+                    }));
+                }
             }
+            i++;
         }
 
         Graphics.render();

@@ -3,6 +3,7 @@ import { User } from './user.js';
 import { Game } from './game.js';
 import { Input } from './input.js';
 import { Map } from './map.js';
+import { Level } from './level.js';
 
 window.onload = () => {
     User.load_data();
@@ -57,5 +58,6 @@ window.onload = () => {
         Graphics.add_object(start_img);
         Graphics.add_object(button);
         Graphics.render();
+        Level.load_level(0, 0);
     });
 }
