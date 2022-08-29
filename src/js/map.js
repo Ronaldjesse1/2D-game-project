@@ -6,31 +6,28 @@ class Map {
     static height = 2000
     static width = 800
 
-    _offsetx = 0
-    _offsety = 1500
+    static _offsetx = 0
+    static _offsety = 1500
 
-    points = []
+    static points = []
 
-    name = null
+    static name = null
 
-    static init() {
+    static init(callback = () => {}) {
         fetch('./sources/map-locations/' + User.mapno + '.json')
         .then(response => response.json())
-        .then(jsondata => Map.points = jsondata)
+        .then(jsondata => {
+            Map.spawn = jsondata.spawn;
+            Map.points = jsondata.locations;
+            Map.width = jsondata.width;
+            Map.height = jsondata.height;
+        }).catch(() => console.log('error loading map'));
     }
 
-    constructor({ id, name, points, spawn }) {
-        if (!points) { console.log('ERROR map created without path'); return; }
-        this.id = id 
-        this.name = name || 'map' + this.id;
-        this.points = points;
-        this.spawn = spawn;
-        this.height = Map.height;
-        this.width = Map.width;
-        let points_graphicobjects = [];
+    static load() {
         let i = 0;
-        points.forEach(([x, y]) => {
-
+        let points_graphicobjects = [];
+        Map.points.forEach(([x, y]) => {
             let img_id = 'level'
             if (i < User.level) img_id += '-completed';
             if (i > User.level) img_id += '-locked';
@@ -46,31 +43,27 @@ class Map {
         });
         Graphics.add_object(new Graphics.GraphicsImage({
             id: 'map',
-            imgid: 'map-' + this.id,
+            imgid: 'map-' + User.mapno,
             x: 0,
             y: Graphics.height - Map.height,
-            width: Graphics.width,
+            width: Map.width,
             height: Graphics.height,
             children: points_graphicobjects
         }));
     }
 
-   offsetx(dx) {
-        if (dx > 0) this._offsetx = Math.min(Map.width - Graphics.width, this._offsetx + dx);
-        else this._offsetx = Math.max(0, this._offsetx + dx);
-        Graphics.objects['map'].x = -this._offsetx
+   static offsetx(dx) {
+        if (dx > 0) Map._offsetx = Math.min(Map.width - Graphics.width, Map._offsetx + dx);
+        else Map._offsetx = Math.max(0, Map._offsetx + dx);
+        Graphics.objects['map'].x = -Map._offsetx
     }
 
-   offsety(dy) {
+   static offsety(dy) {
         // range of _offsety: 0 - Map.height - Graphics.height
-        console.log(dy)
-        if (dy > 0) this._offsety = Math.max(0, this._offsety - dy);
-        else this._offsety = Math.min(1500, this._offsety - dy);
-        Graphics.objects['map'].y = -this._offsety
+        if (dy > 0) Map._offsety = Math.max(0, Map._offsety - dy);
+        else Map._offsety = Math.min(1500, Map._offsety - dy);
+        Graphics.objects['map'].y = -Map._offsety
     }
 }
 
-const Maps = [
-];
-
-export { Map, Maps };
+export { Map };

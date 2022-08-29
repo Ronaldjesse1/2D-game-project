@@ -49,7 +49,6 @@ window.onload = () => {
             strokeStyle: 'blue',
             fillStyle: 'purple',
             onmousedown: function() {
-                console.log('start game');
                 delete Graphics.objects['start_screen_bg'];
                 delete Graphics.objects['start_screen_rect'];
                 Game.start();

@@ -4,7 +4,7 @@ import { Utils } from './utils.js';
 class Graphics {
 
     static ctx;
-    static width = 800;
+    static width = 500;
     static height = 500;
     static offsetX;
     static offsetY;
@@ -99,9 +99,9 @@ class Graphics {
     static load_image(src, title, f = () => {}) {
         let img = new Image;
         img.src = src;
-        console.log('loading ' + title);
+        //console.log('loading ' + title);
         img.onload = function() {
-            console.log('loaded ' + title)
+            // console.log('loaded ' + title)
             Graphics.images[title] = this;
             f();
         }
